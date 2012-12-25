@@ -8,7 +8,7 @@ addPtn = re.compile("add (.*)")
 switchPtn = re.compile("switch (.*) to (.*)")
 drpPtn = re.compile("drop (.*)")
 
-def AllMeldComstCnt(tile, awang_list, atube_list, abamb_list, aword_list, awind_list):
+def AllMeldComstCnt(tile, awang_list=[], atube_list=[], abamb_list=[], aword_list=[], awind_list=[], unique=False):
     """Look all possible meld composition
     This API will return all possible meld composition count including eye.
     * Argument 
@@ -18,13 +18,18 @@ def AllMeldComstCnt(tile, awang_list, atube_list, abamb_list, aword_list, awind_
       abamb_list - Available bamb list
       aword_list - Available word list
       awind_list - Available wind list
+      unique - True to unique the composition; False otherwise.
     * Return
       Count of all possible meld count.
     """
     ct = GameBoard.CardType(tile)
     if ct == 1:
         cnt = 0
-        if awang_list.count(tile) > 0: cnt+=1
+        comstSet = set()
+        if awang_list.count(tile) > 0:            
+            comstSet.add("[{0},{0}]".format(tile))
+            cnt+=1
+            #print("\t[Test] Eye({0:s},{0:s})-{1}".format(tile, cnt)) 
         awang_list.sort()        
         for t1 in awang_list:
             cwang_list = awang_list[:]
@@ -34,11 +39,18 @@ def AllMeldComstCnt(tile, awang_list, atube_list, abamb_list, aword_list, awind_
                 clist.append(tile)
                 clist.append(t1)
                 clist.append(t2)
-                if MeldDone(clist): cnt+=1
-        return cnt        
+                if MeldDone(clist):               
+                    cnt+=1 
+                    clist.sort()     
+                    comstSet.add(toCListStr(clist))                    
+                    #print("\t[Test] {0}-{1}".format(toCListStr(clist), cnt))
+        return len(comstSet) if unique else cnt     
     elif ct == 2:
         cnt = 0
-        if atube_list.count(tile) > 0: cnt+=1
+        comstSet = set()
+        if atube_list.count(tile) > 0:
+            comstSet.add("[{0},{0}]".format(tile)) 
+            cnt+=1
         atube_list.sort()
         for t1 in atube_list:
             c_list = atube_list[:]
@@ -48,11 +60,16 @@ def AllMeldComstCnt(tile, awang_list, atube_list, abamb_list, aword_list, awind_
                 alist.append(tile)
                 alist.append(t1)
                 alist.append(t2)
-                if MeldDone(alist): cnt+=1
-        return cnt    
+                if MeldDone(alist):
+                    comstSet.add(toCListStr(clist))  
+                    cnt+=1
+        return len(comstSet) if unique else cnt    
     elif ct == 3:
         cnt = 0
-        if abamb_list.count(tile) > 0: cnt+=1
+        comstSet = set()
+        if abamb_list.count(tile) > 0:
+            comstSet.add("[{0},{0}]".format(tile))  
+            cnt+=1
         abamb_list.sort()
         for t1 in abamb_list:
             c_list = abamb_list[:]
@@ -62,8 +79,10 @@ def AllMeldComstCnt(tile, awang_list, atube_list, abamb_list, aword_list, awind_
                 alist.append(tile)
                 alist.append(t1)
                 alist.append(t2)
-                if MeldDone(alist): cnt+=1
-        return cnt    
+                if MeldDone(alist):
+                    comstSet.add(toCListStr(clist))   
+                    cnt+=1
+        return len(comstSet) if unique else cnt    
     elif ct == 4:
         cnt=0
         if aword_list.count(tile) == 1: cnt+=1

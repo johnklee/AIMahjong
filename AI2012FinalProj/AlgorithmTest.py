@@ -7,7 +7,20 @@ from GameBoard import *
 testopt = input('Give test input: ')
 print("Test input='{0}'...".format(testopt))
 
-if int(testopt) == 1:
+if int(testopt) == 4:
+    print("\t[Test] Test API:SearchBestWinTileCompost...")
+    awang_list = []
+    awang_list.append('8萬')
+    awang_list.append('8萬')
+    awang_list.append('3萬')
+    awang_list.append('3萬')
+    awang_list.append('4萬')
+    awang_list.append('4萬')
+    awang_list.append('4萬')
+    awang_list.append('5萬')
+    print("\t[Test] Available Wang List:{0}".format(toCListStr(awang_list)))
+    print("\t[Test] Total {0} possible meld composition!".format(AllMeldComstCnt('4萬', awang_list, None, None, None, None, True)))
+elif int(testopt) == 1:
     # [1萬 2萬 7萬 7萬 |4筒 5筒 6筒 |1條 3條 ||南 南 ]
     # [8萬 ||2條 3條 4條 5條 6條 7條 ||]
     # [4萬 |7筒 |4條 4條 3條||]

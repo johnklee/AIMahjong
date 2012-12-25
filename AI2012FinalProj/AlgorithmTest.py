@@ -18,8 +18,9 @@ if int(testopt) == 4:
     awang_list.append('4萬')
     awang_list.append('4萬')
     awang_list.append('5萬')
+    awang_list.append('6萬')
     print("\t[Test] Available Wang List:{0}".format(toCListStr(awang_list)))
-    print("\t[Test] Total {0} possible meld composition!".format(AllMeldComstCnt('4萬', awang_list, None, None, None, None, True)))
+    print("\t[Test] Total {0} possible meld composition!".format(AllMeldComstCnt('4萬', awang_list, None, None, None, None)))
 elif int(testopt) == 1:
     # [1萬 2萬 7萬 7萬 |4筒 5筒 6筒 |1條 3條 ||南 南 ]
     # [8萬 ||2條 3條 4條 5條 6條 7條 ||]

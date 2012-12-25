@@ -7,6 +7,9 @@ from GameBoard import toCListStr
 #   - 2012/12/03 John K Lee
 #     * Able to be interactive in Pong/Klong case.
 #     * Fix bug on showing eating card list.
+#   - 2012/12/25 John K Lee
+#     * Replace Tab with Space.
+#     * Print tile list in hand when pong/eat condition occurs.
 #
 if platform.python_version().split('.')[0] == '2':
     input = raw_input
@@ -176,7 +179,7 @@ class Agent:
             self.flow_list.append(card)
             self.flow_list.sort()
             return self.idraw()
-        print("\t[Info] You draw {0}...".format(card))
+        print("\t[Info] {0}: You draw {1}...".format(self, card))
 
         # 確認槓牌
         if dctype==1:
@@ -401,12 +404,14 @@ class Agent:
         return card
     
     def _pong(self, c_list, count, card):
+        print('\t[Info] {0}'.format(self))
         pong_opt = input('\t[Info] Pong/Kong {0}? (y/n): '.format(card))
         if len(pong_opt) == 0 or (pong_opt == 'n' or pong_opt == 'N'):
             return
         
-        for i in range(count+1):
-            self.pong_list.append(card)
+        #for i in range(count+1):
+        #    self.pong_list.append(card)
+        self.pong_list.extend(card*(count+1))
             
         for i in range(count):
             c_list.remove(card)
@@ -414,9 +419,9 @@ class Agent:
         
         if count==2:
             #dcard = self.drop()
-	    dcard = None
-	    while not dcard:
-	        dcard = self._chooseDropCard()
+            dcard = None
+            while not dcard:
+                dcard = self._chooseDropCard()
             print("\t[Test] {0}: Pong '{1}' and drop {2}!".format(self.name, card, dcard))
             #self.gb.disCard(self, dcard)
             return dcard
@@ -473,28 +478,31 @@ class Agent:
             print("\t[Test] Agent({0}) 吃胡 {1}!".format(self.name, card))
             return
         # Greedy algorithm: Always eat from the first choice
-	print('\t[Info] Eat {0} has option(s):'.format(card))
+        print('\t[Info] {0}'.format(self))
+        print('\t[Info] Eat {0} has option(s):'.format(card))
         if ctype==1:
-	    #if len(eat_list)==1: return self._eat(card, self.wang_list, eat_list[0][0], eat_list[0][1])
-	    for i in range(len(eat_list)):
-		print("\t{0}:{1} ".format(i+1, toCListStr(eat_list[i][1])))
-	    choice_opt = input('\t: ')
-	    if len(choice_opt) > 0: 
-            	return self._eat(card, self.wang_list, eat_list[int(choice_opt)-1][0], eat_list[int(choice_opt)][1])
-        elif ctype==2:
-	    #if len(eat_list)==1: return self._eat(card, self.tube_list, eat_list[0][0], eat_list[0][1])
-	    for i in range(len(eat_list)):
+        #if len(eat_list)==1: return self._eat(card, self.wang_list, eat_list[0][0], eat_list[0][1])
+            for i in range(len(eat_list)):
                 print("\t{0}:{1} ".format(i+1, toCListStr(eat_list[i][1])))
             choice_opt = input('\t: ')
+            if len(choice_opt) > 0: 
+                return self._eat(card, self.wang_list, eat_list[int(choice_opt)-1][0], eat_list[int(choice_opt)-1][1])
+        elif ctype==2:
+        #if len(eat_list)==1: return self._eat(card, self.tube_list, eat_list[0][0], eat_list[0][1])
+            for i in range(len(eat_list)):
+                print("\t{0}:{1} ".format(i+1, toCListStr(eat_list[i][1])))
+            choice_opt = input('\t: ')
+            if choice_opt == 'n' or choice_opt == 'N':
+                return
             if len(choice_opt) > 0:
-                return self._eat(card, self.tube_list, eat_list[int(choice_opt)-1][0], eat_list[int(choice_opt)][1])
+                return self._eat(card, self.tube_list, eat_list[int(choice_opt)-1][0], eat_list[int(choice_opt)-1][1])
         elif ctype==3:
-	    #if len(eat_list)==1: return self._eat(card, self.bamb_list, eat_list[0][0], eat_list[0][1])
-	    for i in range(len(eat_list)):
+        #if len(eat_list)==1: return self._eat(card, self.bamb_list, eat_list[0][0], eat_list[0][1])
+            for i in range(len(eat_list)):
                 print("\t{0}:{1} ".format(i+1, toCListStr(eat_list[i][1])))
             choice_opt = input('\tChoose 1-{0}: '.format(len(eat_list)))
             if len(choice_opt) > 0:
-                return self._eat(card, self.bamb_list, eat_list[int(choice_opt)-1][0], eat_list[int(choice_opt)][1])
+                return self._eat(card, self.bamb_list, eat_list[int(choice_opt)-1][0], eat_list[int(choice_opt)-1][1])
 
     # 將牌放入
     def _feedCard(self, card):

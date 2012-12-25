@@ -39,10 +39,14 @@ def AllMeldComstCnt(tile, awang_list=[], atube_list=[], abamb_list=[], aword_lis
                 clist.append(tile)
                 clist.append(t1)
                 clist.append(t2)
-                if MeldDone(clist):               
-                    cnt+=1 
-                    clist.sort()     
-                    comstSet.add(toCListStr(clist))                    
+                if MeldDone(clist):
+                    clist.sort()         
+                    if not toCListStr(clist) in  comstSet:
+                        if t1 == t2:
+                            cnt+=1
+                        else:
+                            cnt+=min(awang_list.count(t1), awang_list.count(t2))                                            
+                    comstSet.add(toCListStr(clist))                                        
                     #print("\t[Test] {0}-{1}".format(toCListStr(clist), cnt))
         return len(comstSet) if unique else cnt     
     elif ct == 2:
@@ -61,8 +65,13 @@ def AllMeldComstCnt(tile, awang_list=[], atube_list=[], abamb_list=[], aword_lis
                 alist.append(t1)
                 alist.append(t2)
                 if MeldDone(alist):
-                    comstSet.add(toCListStr(clist))  
-                    cnt+=1
+                    alist.sort()         
+                    if not toCListStr(alist) in  comstSet:
+                        if t1 == t2:
+                            cnt+=1
+                        else:
+                            cnt+=min(awang_list.count(t1), awang_list.count(t2))                                            
+                    comstSet.add(toCListStr(alist))
         return len(comstSet) if unique else cnt    
     elif ct == 3:
         cnt = 0
@@ -80,8 +89,13 @@ def AllMeldComstCnt(tile, awang_list=[], atube_list=[], abamb_list=[], aword_lis
                 alist.append(t1)
                 alist.append(t2)
                 if MeldDone(alist):
-                    comstSet.add(toCListStr(clist))   
-                    cnt+=1
+                    alist.sort()         
+                    if not toCListStr(alist) in  comstSet:
+                        if t1 == t2:
+                            cnt+=1
+                        else:
+                            cnt+=min(awang_list.count(t1), awang_list.count(t2))                                            
+                    comstSet.add(toCListStr(alist))
         return len(comstSet) if unique else cnt    
     elif ct == 4:
         cnt=0

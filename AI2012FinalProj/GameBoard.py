@@ -170,9 +170,8 @@ class GameBoard:
             for agt in self.aget_list:
                 cnt -= agt.pong_list.count(wc)
             if agent:
-                cnt -= agent.wang_list.count(wc)
-            for i in range(cnt):
-                awang_list.append(wc)
+                cnt -= agent.wang_list.count(wc)            
+            awang_list.extend([wc]*cnt)
         return awang_list
 
     def atube_list(self, agent=None):
@@ -190,8 +189,7 @@ class GameBoard:
                 cnt -= agt.pong_list.count(t)
             if agent:
                 cnt -= agent.tube_list.count(t)
-            for i in range(cnt):
-                alist.append(t)
+            alist.extend([t]*cnt)
         return alist
 
     def abamb_list(self, agent=None):
@@ -209,8 +207,7 @@ class GameBoard:
                 cnt -= agt.pong_list.count(t)
             if agent:
                 cnt -= agent.bamb_list.count(t)
-            for i in range(cnt):
-                alist.append(t)
+            alist.extend([t]*cnt)            
         return alist
 
     def aword_list(self, agent=None):
@@ -228,8 +225,7 @@ class GameBoard:
                 cnt -= agt.pong_list.count(t)
             if agent:
                 cnt -= agent.word_list.count(t)
-            for i in range(cnt):
-                alist.append(t)
+            alist.extend([t]*cnt) 
         return alist
 
     def awind_list(self, agent=None):
@@ -247,8 +243,7 @@ class GameBoard:
                 cnt -= agt.pong_list.count(t)
             if agent:
                 cnt -= agent.wind_list.count(t)
-            for i in range(cnt):
-                alist.append(t)
+            alist.extend([t]*cnt) 
         return alist
 
     def rightOpponent(self, agent):
@@ -703,7 +698,6 @@ class GameBoard:
         * Return:
           True to win; False otherwise."""
         # http://www.programmer-club.com/showSameTitleN/gameprogram/3310.html
-        eyePair = False
         tbamb_list = [] # 條子
         for e in agent.bamb_list:
             tbamb_list.append(int(e[0:1]))
@@ -753,7 +747,6 @@ class GameBoard:
                     #print("\t[Test] Return false-2")
                     return False
                 else:
-                    eyePair=True
                     del twind_list[:]
             elif dirt_len!=0:
                 #print("\t[Test] Return false-3")
@@ -768,7 +761,6 @@ class GameBoard:
                     #print("\t[Test] Return false-4")
                     return False
                 else:
-                    eyePair=True
                     del tword_list[:]
             elif word_len!=0:
                 #print("\t[Test] {0}".format(toCListStr(tword_list)))
@@ -825,7 +817,7 @@ class GameBoard:
     # 開始遊戲    
     def play(self):
         """ Start to simulate Mahjong game until draw or win."""
-	self.play_count+=1
+        self.play_count+=1
         self.shuffle()
         # Draw cards for each agent
         for agent in self.aget_list:

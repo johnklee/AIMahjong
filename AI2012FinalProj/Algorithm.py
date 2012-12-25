@@ -8,6 +8,74 @@ addPtn = re.compile("add (.*)")
 switchPtn = re.compile("switch (.*) to (.*)")
 drpPtn = re.compile("drop (.*)")
 
+def AllMeldComstCnt(tile, awang_list, atube_list, abamb_list, aword_list, awind_list):
+    """Look all possible meld composition
+    This API will return all possible meld composition count including eye.
+    * Argument 
+      tile - Check tile
+      awang_list - Available wang list
+      atube_list - Available tube list
+      abamb_list - Available bamb list
+      aword_list - Available word list
+      awind_list - Available wind list
+    * Return
+      Count of all possible meld count.
+    """
+    ct = GameBoard.CardType(tile)
+    if ct == 1:
+        cnt = 0
+        if awang_list.count(tile) > 0: cnt+=1
+        awang_list.sort()        
+        for t1 in awang_list:
+            cwang_list = awang_list[:]
+            cwang_list.remove(t1)
+            for t2 in cwang_list:
+                clist = []
+                clist.append(tile)
+                clist.append(t1)
+                clist.append(t2)
+                if MeldDone(clist): cnt+=1
+        return cnt        
+    elif ct == 2:
+        cnt = 0
+        if atube_list.count(tile) > 0: cnt+=1
+        atube_list.sort()
+        for t1 in atube_list:
+            c_list = atube_list[:]
+            c_list.remove(t1)
+            for t2 in c_list:
+                alist = []
+                alist.append(tile)
+                alist.append(t1)
+                alist.append(t2)
+                if MeldDone(alist): cnt+=1
+        return cnt    
+    elif ct == 3:
+        cnt = 0
+        if abamb_list.count(tile) > 0: cnt+=1
+        abamb_list.sort()
+        for t1 in abamb_list:
+            c_list = abamb_list[:]
+            c_list.remove(t1)
+            for t2 in c_list:
+                alist = []
+                alist.append(tile)
+                alist.append(t1)
+                alist.append(t2)
+                if MeldDone(alist): cnt+=1
+        return cnt    
+    elif ct == 4:
+        cnt=0
+        if aword_list.count(tile) == 1: cnt+=1
+        elif aword_list.count(tile) > 1: cnt+=2
+        return cnt
+    elif ct == 5:
+        cnt=0
+        if awind_list.count(tile) == 1: cnt+=1
+        elif aword_list.count(tile) > 1: cnt+=2
+        return cnt
+    return 0
+
 def _SearchTileCount(tile, wang_list, tube_list, bamb_list, word_list, wind_list):
     """ Search Tile Count. (找某張牌在手上牌組出現的次數)
     * Argument

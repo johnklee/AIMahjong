@@ -147,13 +147,42 @@ class JAgent(SmartAgent.Agent):
         * Return
           Dropped card which being removed from hand.
         """
-        sol_tuple = SearchBestWinTileCompost(self.wang_list, self.gb.awang_list(), \
-                                             self.tube_list, self.gb.atube_list(), \
-                                             self.bamb_list, self.gb.abamb_list(), \
-                                             self.word_list, self.gb.aword_list(), \
-                                             self.wind_list, self.gb.awind_list()) 
+        awang_list = self.gb.awang_list()
+        atube_list = self.gb.atube_list()
+        abamb_list = self.gb.abamb_list()
+        aword_list = self.gb.aword_list()
+        awind_list = self.gb.awind_list()
+        sol_tuple = SearchBestWinTileCompost(self.wang_list, awang_list, \
+                                             self.tube_list, atube_list, \
+                                             self.bamb_list, abamb_list, \
+                                             self.word_list, aword_list, \
+                                             self.wind_list, awind_list) 
         if sol_tuple:
             #print("\t[Test] Drop suggestion: {0}->{1}".format(toCListStr(sol_tuple[1]), self))
+            tileComstMap = {}
+            for t in sol_tuple[1]:
+                tileComstMap[t] = AllMeldComstCnt(t, awang_list, atube_list, abamb_list, aword_list, awind_list)
+            rankList = sorted(tileComstMap.iteritems(), key=lambda (k,v):(v,k))
+            dropTuple = rankList[0]
+            #print("\t[Test] Drop Tuple={0:s}...".format(dropTuple[0]))
+            ct = GameBoard.CardType(dropTuple[0])
+            if ct == 1:
+                self.wang_list.remove(dropTuple[0])
+                return dropTuple[0]
+            elif ct == 2:
+                self.tube_list.remove(dropTuple[0])
+                return dropTuple[0]
+            elif ct ==3:
+                self.bamb_list.remove(dropTuple[0])
+                return dropTuple[0]
+            elif ct == 4:
+                self.word_list.remove(dropTuple[0])
+                return dropTuple[0]
+            elif ct == 5:
+                self.wind_list.remove(dropTuple[0])
+                return dropTuple[0]
+                    
+            # wind/word 先丟        
             for t in self.gb.fwind_list:
                 if t in sol_tuple[1]:
                     self.wind_list.remove(t)
@@ -162,6 +191,7 @@ class JAgent(SmartAgent.Agent):
                 if t in sol_tuple[1]:
                     self.word_list.remove(t)
                     return t
+                
             for t in sol_tuple[1]:
                 ct = GameBoard.CardType(t)
                 if ct == 1 and len(self.wang_list) == 1:

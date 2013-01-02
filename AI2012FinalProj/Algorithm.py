@@ -180,6 +180,66 @@ def calculatePWTileCnt(pwang_cp, ptube_cp, pbamb_cp, pword_cp, pwind_cp, actions
         #print("{1} with PreWin Tile Count={0}...".format(pcardForm, curPWTC))
         return curPWTC
 
+def EvalEat(tile, wang_list=[], awang_list=[],
+                  tube_list=[], atube_list=[],
+                  bamb_list=[], abamb_list=[], debug=False):
+    """Search Best PreWin Tile Composition
+    This API will look for best pre-win tile composition based on given tile lists in hand.
+    ""    """
+    if debug: print("\t[Test] Original Tiles:")
+    if debug: print("\tWang={0}:{1}".format(toCListStr(wang_list), toCListStr(awang_list)))
+    if debug: print("\tTube={0}:{1}".format(toCListStr(tube_list), toCListStr(atube_list)))
+    if debug: print("\tBamb={0}:{1}".format(toCListStr(bamb_list), toCListStr(abamb_list)))
+    
+    ctype = GameBoard.CardType(tile)
+    sol_len=10
+    nsol_len=10
+    eat_list = None
+    if ctype == 1:        
+        eat_list = wang_list[:]
+        neat_list = eat_list[:]
+        eat_list.append(tile)        
+        sol_eat = SMeld1(eat_list, awang_list)
+        for t in sol_eat.values():
+            for a in t:
+                a_len = len(a[1])
+                if a_len < sol_len: sol_len = a_len
+        nsol_eat = SMeld1(neat_list, awang_list)
+        for t in nsol_eat.values():
+            for a in t:
+                a_len = len(a[1])
+                if a_len < nsol_len: nsol_len = a_len    
+    elif ctype == 2:
+        eat_list = tube_list[:]
+        neat_list = eat_list[:]
+        eat_list.append(tile)        
+        sol_eat = SMeld1(eat_list, atube_list)
+        for t in sol_eat.values():
+            for a in t:
+                a_len = len(a[1])
+                if a_len < sol_len: sol_len = a_len
+        nsol_eat = SMeld1(neat_list, atube_list)
+        for t in nsol_eat.values():
+            for a in t:
+                a_len = len(a[1])
+                if a_len < nsol_len: nsol_len = a_len
+    elif ctype == 3:
+        eat_list = bamb_list[:]
+        neat_list = eat_list[:]
+        eat_list.append(tile)        
+        sol_eat = SMeld1(eat_list, abamb_list)
+        for t in sol_eat.values():
+            for a in t:
+                a_len = len(a[1])
+                if a_len < sol_len: sol_len = a_len
+        nsol_eat = SMeld1(neat_list, abamb_list)
+        for t in nsol_eat.values():
+            for a in t:
+                a_len = len(a[1])
+                if a_len < nsol_len: nsol_len = a_len   
+    return sol_len <= nsol_len
+    
+
 def SearchBestWinTileCompost(wang_list, awang_list,
                              tube_list, atube_list,
                              bamb_list, abamb_list,
@@ -244,7 +304,6 @@ def SearchBestWinTileCompost(wang_list, awang_list,
     pbamb_cp = None
     pword_cp = None
     pwind_cp = None
-    pcardForm = None
     #addPtn = re.compile("add (.*)")
     #switchPtn = re.compile("switch (.*) to (.*)")
     #drpPtn = re.compile("drop (.*)")

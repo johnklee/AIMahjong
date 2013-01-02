@@ -6,66 +6,81 @@ import SmartAgent
 class JAgent(SmartAgent.Agent):
     def hu(self, card):
         """ Callback by Gameboard to inform winning. (Not necessary API for Agent)"""
-        print("\t[Test] Agent({0}) 胡牌! ({1})".format(self, card))
+        print("\t[Test] Agent({0}) 胡牌! ({1})".format(self, self.gb.round))
 
-##    def eat(self, agent, card, ctype, eat_list):
-##        if GameBoard.GoalState(self, card): # Check goal state
-##            self.gb.win_agent = self
-##            self.win_card = card
-##            self.win+=1
-##            agent.lose+=1
-##            self.dprint("\t[Test] Agent({0}) 吃胡 {1}!".format(self.name, card))
-##            return
-##        sol_tuple = None
-##        if ctype==1:
-##            clist = self.wang_list[:]
-##            clist.append(card)
-##            sol_tuple = SearchBestWinTileCompost(clist, self.gb.awang_list(), \
-##                                                 self.tube_list, self.gb.atube_list(), \
-##                                                 self.bamb_list, self.gb.abamb_list(), \
-##                                                 self.word_list, self.gb.aword_list(), \
-##                                                 self.wind_list, self.gb.awind_list())
-##        elif ctype==2:
-##            clist = self.tube_list[:]
-##            clist.append(card)
-##            sol_tuple = SearchBestWinTileCompost(self.wang_list, self.gb.awang_list(), \
-##                                                 clist, self.gb.atube_list(), \
-##                                                 self.bamb_list, self.gb.abamb_list(), \
-##                                                 self.word_list, self.gb.aword_list(), \
-##                                                 self.wind_list, self.gb.awind_list())
-##        elif ctype==3:
-##            clist = self.bamb_list[:]
-##            clist.append(card)
-##            sol_tuple = SearchBestWinTileCompost(self.wang_list, self.gb.awang_list(), \
-##                                                 self.tube_list, self.gb.atube_list(), \
-##                                                 clist, self.gb.abamb_list(), \
-##                                                 self.word_list, self.gb.aword_list(), \
-##                                                 self.wind_list, self.gb.awind_list())
-##        elif ctype==4:
-##            clist = self.word_list[:]
-##            clist.append(card)
-##            sol_tuple = SearchBestWinTileCompost(self.wang_list, self.gb.awang_list(), \
-##                                                 self.tube_list, self.gb.atube_list(), \
-##                                                 self.bamb_list, self.gb.abamb_list(), \
-##                                                 clist, self.gb.aword_list(), \
-##                                                 self.wind_list, self.gb.awind_list())
-##        elif ctype==5:
-##            clist = self.wind_list[:]
-##            clist.append(card)
-##            sol_tuple = SearchBestWinTileCompost(self.wang_list, self.gb.awang_list(), \
-##                                                 self.tube_list, self.gb.atube_list(), \
-##                                                 self.bamb_list, self.gb.abamb_list(), \
-##                                                 self.word_list, self.gb.aword_list(), \
-##                                                 clist, self.gb.awind_list())
-##        
-##        # 如果吃的牌在 suggest eat list 中則吃.
-##        if not sol_tuple or card in sol_tuple[2]:
-##            if ctype==1:
-##                return self._eat(self.wang_list, eat_list[0][0], eat_list[0][1])
-##            elif ctype==2:
-##                return self._eat(self.tube_list, eat_list[0][0], eat_list[0][1])
-##            elif ctype==3:
-##                return self._eat(self.bamb_list, eat_list[0][0], eat_list[0][1])
+    def eat(self, agent, card, ctype, eat_list):
+        if ctype==1 and EvalEat(card, wang_list=self.wang_list, awang_list=self.gb.awang_list(self)):
+            return self._eat(self.wang_list, eat_list[0][0], eat_list[0][1])
+        elif ctype==2 and EvalEat(card, tube_list=self.tube_list, atube_list=self.gb.atube_list(self)):
+            return self._eat(self.tube_list, eat_list[0][0], eat_list[0][1])
+        elif ctype==3 and EvalEat(card, bamb_list=self.bamb_list, abamb_list=self.gb.abamb_list(self)):
+            return self._eat(self.bamb_list, eat_list[0][0], eat_list[0][1])
+        else:
+            print("\t[Test] Skip eat...{0}/{1}".format(self, card))
+
+#    def eat(self, agent, card, ctype, eat_list):
+#        if GameBoard.GoalState(self, card): # Check goal state
+#            self.gb.win_agent = self
+#            self.win_card = card
+#            self.win+=1
+#            agent.lose+=1
+#            self.dprint("\t[Test] Agent({0}) 吃胡 {1}!".format(self.name, card))
+#            return
+#        sol_tuple = None
+#        if ctype==1:
+#            clist = self.wang_list[:]
+#            clist.append(card)
+#            clist.srot()
+#            sol_tuple = SearchBestWinTileCompost(clist, self.gb.awang_list(self), \
+#                                                 self.tube_list, self.gb.atube_list(self), \
+#                                                 self.bamb_list, self.gb.abamb_list(self), \
+#                                                 self.word_list, self.gb.aword_list(self), \
+#                                                 self.wind_list, self.gb.awind_list(self))
+#        elif ctype==2:
+#            clist = self.tube_list[:]
+#            clist.append(card)
+#            clist.srot()
+#            sol_tuple = SearchBestWinTileCompost(self.wang_list, self.gb.awang_list(self), \
+#                                                 clist, self.gb.atube_list(self), \
+#                                                 self.bamb_list, self.gb.abamb_list(self), \
+#                                                 self.word_list, self.gb.aword_list(self), \
+#                                                 self.wind_list, self.gb.awind_list(self))
+#        elif ctype==3:
+#            clist = self.bamb_list[:]
+#            clist.append(card)
+#            clist.srot()
+#            sol_tuple = SearchBestWinTileCompost(self.wang_list, self.gb.awang_list(self), \
+#                                                 self.tube_list, self.gb.atube_list(self), \
+#                                                 clist, self.gb.abamb_list(self), \
+#                                                 self.word_list, self.gb.aword_list(self), \
+#                                                 self.wind_list, self.gb.awind_list(self))
+#        elif ctype==4:
+#            clist = self.word_list[:]
+#            clist.append(card)
+#            clist.srot()
+#            sol_tuple = SearchBestWinTileCompost(self.wang_list, self.gb.awang_list(self), \
+#                                                 self.tube_list, self.gb.atube_list(self), \
+#                                                 self.bamb_list, self.gb.abamb_list(self), \
+#                                                 clist, self.gb.aword_list(self), \
+#                                                 self.wind_list, self.gb.awind_list(self))
+#        elif ctype==5:
+#            clist = self.wind_list[:]
+#            clist.append(card)
+#            clist.srot()
+#            sol_tuple = SearchBestWinTileCompost(self.wang_list, self.gb.awang_list(self), \
+#                                                 self.tube_list, self.gb.atube_list(self), \
+#                                                 self.bamb_list, self.gb.abamb_list(self), \
+#                                                 self.word_list, self.gb.aword_list(self), \
+#                                                 clist, self.gb.awind_list(self))
+#        
+#        # 如果吃的牌在 suggest eat list 中則吃.
+#        if not sol_tuple or card in sol_tuple[2]:
+#            if ctype==1:
+#                return self._eat(self.wang_list, eat_list[0][0], eat_list[0][1])
+#            elif ctype==2:
+#                return self._eat(self.tube_list, eat_list[0][0], eat_list[0][1])
+#            elif ctype==3:
+#                return self._eat(self.bamb_list, eat_list[0][0], eat_list[0][1])
             
 
     def pong(self, agent, ctype, count, card):
@@ -146,25 +161,86 @@ class JAgent(SmartAgent.Agent):
            2.4 隨便從 suggest dropped card list 挑一張丟.
         * Return
           Dropped card which being removed from hand.
-        """
-        awang_list = self.gb.awang_list()
-        atube_list = self.gb.atube_list()
-        abamb_list = self.gb.abamb_list()
-        aword_list = self.gb.aword_list()
-        awind_list = self.gb.awind_list()
+        """        
+        awang_list = self.gb.awang_list(self)
+        atube_list = self.gb.atube_list(self)
+        abamb_list = self.gb.abamb_list(self)
+        aword_list = self.gb.aword_list(self)
+        awind_list = self.gb.awind_list(self)
+        if self.gb.round > 60 and not self.pwin_flag:
+                # Give up game when game round reach 70 and not entering ready-hand status.                
+                for t in self.wind_list:
+                    if AllMeldComstCnt(t, awind_list=awind_list)==0:
+                        self.wind_list.remove(t)
+                        print("\t[Test] Give up game and drop {0:s}...".format(t))
+                        return t
+                for t in self.word_list:
+                    if AllMeldComstCnt(t, aword_list=aword_list)==0:
+                        self.word_list.remove(t)
+                        print("\t[Test] Give up game and drop {0:s}...".format(t))
+                        return t
+                for t in self.wang_list:
+                    if AllMeldComstCnt(t, awang_list=awang_list)==0:
+                        self.wang_list.remove(t)
+                        print("\t[Test] Give up game and drop {0:s}...".format(t))
+                        return t
+                for t in self.tube_list:
+                    if AllMeldComstCnt(t, atube_list=atube_list)==0:
+                        self.tube_list.remove(t)
+                        print("\t[Test] Give up game and drop {0:s}...".format(t))
+                        return t
+                for t in self.bamb_list:
+                    if AllMeldComstCnt(t, abamb_list=abamb_list)==0:
+                        self.bamb_list.remove(t)
+                        print("\t[Test] Give up game and drop {0:s}...".format(t))
+                        return t
+                    
         sol_tuple = SearchBestWinTileCompost(self.wang_list, awang_list, \
                                              self.tube_list, atube_list, \
                                              self.bamb_list, abamb_list, \
                                              self.word_list, aword_list, \
                                              self.wind_list, awind_list) 
-        if sol_tuple:
-            #print("\t[Test] Drop suggestion: {0}->{1}".format(toCListStr(sol_tuple[1]), self))
+        if sol_tuple:                            
+            if self.gb.round > 50:
+                # Drop safe tile first
+                # 上家丟過先丟
+                leftAgt = self.gb.leftOpponent(self)
+                if leftAgt and leftAgt.name in self.gb.drop_record and len(self.gb.drop_record[leftAgt.name]) > 0:
+                    left_drop_tile = self.gb.drop_record[leftAgt.name][-1]
+                    if left_drop_tile in sol_tuple[1]:
+                        ct = GameBoard.CardType(left_drop_tile)
+                        if ct == 1:
+                            self.wang_list.remove(left_drop_tile)
+                            return left_drop_tile
+                        elif ct == 2:
+                            self.tube_list.remove(left_drop_tile)
+                            return left_drop_tile
+                        elif ct == 3:
+                            self.bamb_list.remove(left_drop_tile)
+                            return left_drop_tile
+                        
+                # 下家丟過先丟
+                rightAgt = self.gb.rightOpponent(self)
+                if rightAgt and rightAgt.name in self.gb.drop_record and len(self.gb.drop_record[rightAgt.name]) > 0:
+                    right_drop_tile = self.gb.drop_record[rightAgt.name][-1]
+                    if right_drop_tile in sol_tuple[1]:
+                        ct = GameBoard.CardType(right_drop_tile)
+                        if ct == 1:
+                            self.wang_list.remove(right_drop_tile)
+                            return right_drop_tile
+                        elif ct == 2:
+                            self.tube_list.remove(right_drop_tile)
+                            return right_drop_tile
+                        elif ct == 3:
+                            self.bamb_list.remove(right_drop_tile)
+                            return right_drop_tile                    
+                                    
+            
             tileComstMap = {}
             for t in sol_tuple[1]:
                 tileComstMap[t] = AllMeldComstCnt(t, awang_list, atube_list, abamb_list, aword_list, awind_list)
             rankList = sorted(tileComstMap.iteritems(), key=lambda (k,v):(v,k))
             dropTuple = rankList[0]
-            #print("\t[Test] Drop Tuple={0:s}...".format(dropTuple[0]))
             ct = GameBoard.CardType(dropTuple[0])
             if ct == 1:
                 self.wang_list.remove(dropTuple[0])
@@ -203,33 +279,6 @@ class JAgent(SmartAgent.Agent):
                 elif ct == 3 and len(self.bamb_list) == 1:
                     self.bamb_list.remove(t)
                     return t
-
-            # 下家丟過先丟
-            rightAgt = self.gb.rightOpponent(self)
-            if rightAgt and rightAgt.name in self.gb.drop_record and len(self.gb.drop_record[rightAgt.name]) > 0:
-                right_drop_tile = self.gb.drop_record[rightAgt.name][-1]
-                if right_drop_tile in sol_tuple[1]:
-                    ct = GameBoard.CardType(right_drop_tile)
-                    if ct == 1:
-                        self.wang_list.remove(right_drop_tile)
-                    elif ct == 2:
-                        self.tube_list.remove(right_drop_tile)
-                    else:
-                        self.bamb_list.remove(right_drop_tile)
-                    return right_drop_tile
-            # 上家丟過先丟
-            leftAgt = self.gb.leftOpponent(self)
-            if leftAgt and leftAgt.name in self.gb.drop_record and len(self.gb.drop_record[leftAgt.name]) > 0:
-                left_drop_tile = self.gb.drop_record[leftAgt.name][-1]
-                if left_drop_tile in sol_tuple[1]:
-                    ct = GameBoard.CardType(left_drop_tile)
-                    if ct == 1:
-                        self.wang_list.remove(left_drop_tile)
-                    elif ct == 2:
-                        self.tube_list.remove(left_drop_tile)
-                    else:
-                        self.bamb_list.remove(left_drop_tile)
-                    return left_drop_tile
                 
             # 邊張的先丟
             for t in sol_tuple[1]:

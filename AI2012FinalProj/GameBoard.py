@@ -134,6 +134,7 @@ class GameBoard:
         self.wrong_count = 0
         self.play_count = 0
         self.card_count = 0
+        self.round = 0
         #self.shuffle()        
 
     def show_tube_list(self):
@@ -171,7 +172,7 @@ class GameBoard:
                 cnt -= agt.pong_list.count(wc)
             if agent:
                 cnt -= agent.wang_list.count(wc)            
-            awang_list.extend([wc]*cnt)
+            if cnt > 0: awang_list.extend([wc]*cnt)
         return awang_list
 
     def atube_list(self, agent=None):
@@ -189,7 +190,7 @@ class GameBoard:
                 cnt -= agt.pong_list.count(t)
             if agent:
                 cnt -= agent.tube_list.count(t)
-            alist.extend([t]*cnt)
+            if cnt > 0: alist.extend([t]*cnt)
         return alist
 
     def abamb_list(self, agent=None):
@@ -826,7 +827,7 @@ class GameBoard:
         
             
         # Start game by assign card to each agent until one of them reach goal state
-        i = 0
+        self.round = 0
         while self.card_count>10 and not self.win_agent:
             agent = self.aget_list[int(self.play_turn)]
             self.play_turn = (self.play_turn+1)%len(self.aget_list)
@@ -843,16 +844,16 @@ class GameBoard:
                 break
 
             if dcard: self.disCard(agent, dcard)
-            i+=1
+            self.round+=1
             pwin_ac = 0
             for agent in self.aget_list:
-                self.dprint("[Turn{0}] {1}".format(i, agent))
+                self.dprint("[Turn{0}] {1}".format(self.round, agent))
                 if hasattr(agent, 'pwin_flag') and agent.pwin_flag:
                     pwin_ac+=1
             
             # Calculate prewin agent distribution
-            if i in self.pwin_round:
-                pwin_map = self.pwin_round[i]
+            if self.round in self.pwin_round:
+                pwin_map = self.pwin_round[self.round]
                 if pwin_ac in pwin_map:
                     pwin_map[pwin_ac]+=1
                 else:
@@ -860,14 +861,14 @@ class GameBoard:
             else:
                 pwin_map = {}
                 pwin_map[pwin_ac] = 1
-                self.pwin_round[i] = pwin_map
+                self.pwin_round[self.round] = pwin_map
 
         if self.win_agent:
             self.dprint("\t[Test] Agent({0}) win the game!".format(self.win_agent.name))
-            if i in self.win_round:
-                self.win_round[i]+=1
+            if self.round in self.win_round:
+                self.win_round[self.round]+=1
             else:
-                self.win_round[i]=1
+                self.win_round[self.round]=1
         else:
             self.dprint("\t[Test] 流局...")
 
@@ -1191,6 +1192,7 @@ class GameBoard:
            4.2 Reset agent.win_card
            4.3 Clear agent.pong_list
         """
+        self.round = 0
         del self.drop_list[:]
         self.win_agent = None
         del self.wind_list[:]

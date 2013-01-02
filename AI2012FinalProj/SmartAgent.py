@@ -410,7 +410,7 @@ class Agent(object):
             agent.lose+=1
             self.dprint("\t[Test] Agent({0}) 吃胡 {1}!".format(self.name, card))
             return
-	if self._isPrewin():
+        if self._isPrewin():
             return
         # Greedy algorithm: Always eat from the first choice
         if ctype==1:

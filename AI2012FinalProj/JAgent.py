@@ -9,6 +9,9 @@ class JAgent(SmartAgent.Agent):
         print("\t[Test] Agent({0}) 胡牌! ({1})".format(self, self.gb.round))
 
     def eat(self, agent, card, ctype, eat_list):
+        """ Eat function
+        1. Use API:EvalEat from Algorithm.py to judge eating or not.
+        """
         if ctype==1 and EvalEat(card, wang_list=self.wang_list, awang_list=self.gb.awang_list(self)):
             return self._eat(self.wang_list, eat_list[0][0], eat_list[0][1])
         elif ctype==2 and EvalEat(card, tube_list=self.tube_list, atube_list=self.gb.atube_list(self)):
